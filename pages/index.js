@@ -1,39 +1,9 @@
 import { Box, Button, Text, TextField, Image } from "@skynexui/components";
+import { useRouter } from "next/router";
+import React from "react";
 import appConfig from "../config.json";
 
-function GlobalStyle() {
-  return (
-    <style global jsx>{`
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        list-style: none;
-      }
-      body {
-        font-family: "Open Sans", sans-serif;
-      }
-      /* App fit Height */
-      html,
-      body,
-      #__next {
-        min-height: 100vh;
-        display: flex;
-        flex: 1;
-      }
-      #__next {
-        flex: 1;
-      }
-      #__next > * {
-        flex: 1;
-      }
-      /* ./App fit Height */
-    `}</style>
-  );
-}
-
 function Titulo(props) {
-  // console.log(props);
   const Tag = props.tag || "h1";
   return (
     <>
@@ -64,19 +34,18 @@ function Titulo(props) {
 //export default HomePage;
 
 export default function PaginaInicial() {
-  const username = "peas";
+  const [username, setUsername] = React.useState("gabrielleadriano");
+  const roteamento = useRouter();
+  const [userValido, setUserValido] = React.useState(username.length > 2);
 
   return (
     <>
-      <GlobalStyle />
       <Box
         styleSheet={{
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           backgroundColor: appConfig.theme.colors.primary[500],
-          // backgroundImage:
-          //   "url(https://virtualbackgrounds.site/wp-content/uploads/2020/08/the-matrix-digital-rain.jpg)",
           backgroundImage:
             "url(https://virtualbackgrounds.site/wp-content/uploads/2020/08/the-matrix-digital-rain.jpg)",
           backgroundRepeat: "no-repeat",
@@ -105,6 +74,11 @@ export default function PaginaInicial() {
           {/* Formulário */}
           <Box
             as="form"
+            onSubmit={(event) => {
+              // evita recarregar página
+              event.preventDefault();
+              roteamento.push("/chat");
+            }}
             styleSheet={{
               display: "flex",
               flexDirection: "column",
@@ -123,20 +97,36 @@ export default function PaginaInicial() {
                 color: appConfig.theme.colors.neutrals[300],
               }}
             >
-              {appConfig.name}
+              {appConfig.name} ({username})
             </Text>
 
-            <TextField
-              fullWidth
-              textFieldColors={{
-                neutral: {
-                  textColor: appConfig.theme.colors.neutrals[200],
-                  mainColor: appConfig.theme.colors.neutrals[900],
-                  mainColorHighlight: appConfig.theme.colors.primary[500],
-                  backgroundColor: appConfig.theme.colors.neutrals[800],
-                },
+            {/* <input
+              type="text"
+              value={username}
+              onChange={(event) => {
+                const valor = event.target.value;
+                setUsername(valor);
               }}
-            />
+            /> */}
+            {
+              <TextField
+                value={username}
+                onChange={(event) => {
+                  const valor = event.target.value;
+                  setUsername(valor);
+                  setUserValido(valor.length > 2);
+                }}
+                fullWidth
+                textFieldColors={{
+                  neutral: {
+                    textColor: appConfig.theme.colors.neutrals[200],
+                    mainColor: appConfig.theme.colors.neutrals[900],
+                    mainColorHighlight: appConfig.theme.colors.primary[500],
+                    backgroundColor: appConfig.theme.colors.neutrals[800],
+                  },
+                }}
+              />
+            }
             <Button
               type="submit"
               label="Entrar"
@@ -172,8 +162,15 @@ export default function PaginaInicial() {
                 borderRadius: "50%",
                 marginBottom: "16px",
               }}
-              src={`https://github.com/${username}.png`}
+              src={userValido ? `https://github.com/${username}.png` : ''}
             />
+            {/* <Image
+              styleSheet={{
+                borderRadius: "50%",
+                marginBottom: "16px",
+              }}
+              src={source}
+            /> */}
             <Text
               variant="body4"
               styleSheet={{
@@ -183,7 +180,7 @@ export default function PaginaInicial() {
                 borderRadius: "1000px",
               }}
             >
-              {username}
+              {userValido ? username : ''}
             </Text>
           </Box>
           {/* Photo Area */}
