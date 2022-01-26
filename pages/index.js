@@ -40,6 +40,7 @@ export default function PaginaInicial() {
 
   return (
     <>
+    {/* Box é a mesma coisa que div */}
       <Box
         styleSheet={{
           display: "flex",
